@@ -13,31 +13,26 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Parse body ───────────────────────────────────────────────────────────────
-  let body: unknown;
+  let message = "";
   try {
-    body = await req.json();
+    const body = await req.json();
+    message = String(body?.message ?? body ?? "");
   } catch {
-    body = null;
+    message = "";
   }
 
   const timestamp = new Date().toISOString();
 
   // ── Console log ──────────────────────────────────────────────────────────────
-  console.log(`[LOG] ${timestamp}`, JSON.stringify(body, null, 2));
+  console.log(`${timestamp} : ${message}`);
 
   // ── Response ─────────────────────────────────────────────────────────────────
   return NextResponse.json(
-    {
-      success: true,
-      message: "Log received",
-      timestamp,
-      received: body,
-    },
+    { success: true, log: `${timestamp} : ${message}` },
     { status: 200 }
   );
 }
 
-// Optional: reject non-POST methods explicitly
 export async function GET() {
   return NextResponse.json(
     { success: false, error: "Method not allowed. Use POST." },
